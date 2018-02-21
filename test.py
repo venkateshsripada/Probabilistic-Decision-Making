@@ -1,53 +1,90 @@
-"""
-This short code snippet utilizes the new animation package in
-matplotlib 1.1.0; it's the shortest snippet that I know of that can
-produce an animated plot in python. I'm still hoping that the
-animate package's syntax can be simplified further.
-"""
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+import numpy as np
+
+'''
+
+#initialize distribution
+
+dist = np.full((100, 100), 1/(100*100))
+
+#initialize robot in the world.. TODO randomly
+world = np.zeros((100,100))
+robot1 = world[0][0]
+robot2 = world[80][0]
 
 
-def simData():
-    # this function is called as the argument for
-    # the simPoints function. This function contains
-    # (or defines) and iterator---a device that computes
-    # a value, passes it back to the main program, and then
-    # returns to exactly where it left off in the function upon the
-    # next call. I believe that one has to use this method to animate
-    # a function using the matplotlib animation package.
-    #
-    t_max = 10.0
-    dt = 0.05
-    x = 0.0
-    t = 0.0
-    while t < t_max:
-        x = np.sin(np.pi * t)
-        t = t + dt
-        yield x, t
+def move_up():
+	robot[i][j] = robot[i+1][j]
+for i in range(world[0:][0]):
+	for j in range(world[0][0:]):
+		robot1 = robot1 + world[i][j]
+		robot2 = robot2 + world[i][j]
+#place the target and surrogates. Function written because we are manually placing the targets now
+def target_position(a,b):
+	target = world[a][b]
+	surr_target1 = world[a-20][b-20]
+	surr_target2 = world[a+20][b+20]
+	return target, surr_target1, surr_target2
+#define target so that it can be iterated over in the pdf
+def target():
+	probability around target  is high > 1/100*100
+
+#probability density function of target
+def pdf(t):
+	dist = np.full((100, 100), 1/(100*100))
+	dist = g
+	#print norm.cdf(x, mean, std)
+
+#define move i.e wherever there is maximum kld
+scipy.stats.entropy(dist)
+
+#Update probabilities
+print target(50,50)
+
+'''
 
 
-def simPoints(simData):
-    x, t = simData[0], simData[1]
-    time_text.set_text(time_template % (t))
-    line.set_data(t, x)
-    return line, time_text
+# def getangle(p1, p2):  # angle between start and last point of the line
+# 	x1, y1 = p1
+# 	x2, y2 = p2
+# 	dX = x2 - x1
+# 	dY = y2 - y1
+# 	global rads
+# 	rads = math.atan2(-dY, dX)
+# 	print "angle:", math.degrees(rads)
+# 	return math.degrees(rads)
+
+''' ROBOT MOTION 
+
+# Robot_motion UP --taking only indexes as i and j and not value world[i][j]
+def move_up(i, j):
+	for p in range(len(world)):  # x axis
+		for q in range(len(world)):  # y axis
+			i, j = i, j - 1
 
 
-##
-##   set up figure for plotting:
-##
-fig = plt.figure()
-ax = fig.add_subplot(111)
-# I'm still unfamiliar with the following line of code:
-line, = ax.plot([], [], 'bo', ms=10)
-ax.set_ylim(-1, 1)
-ax.set_xlim(0, 10)
-##
-time_template = 'Time = %.1f s'  # prints running simulation time
-time_text = ax.text(0.05, 0.9, '', transform=ax.transAxes)
-## Now call the animation package: (simData is the user function
-## serving as the argument for simPoints):
-ani = animation.FuncAnimation(fig, simPoints, simData, blit=False, interval=10, repeat=True)
-plt.show()
+def move_right(i, j):
+	for p in range(0, 100):
+		# for j in range(len(world)-1):
+		i, j = i + 1, j
+		print i, j
+		if (i == 100) or (j == 100):
+			move_down(i, j)
+			print i, j
+		plt.plot(i, j, 'ro')
+		plt.show()
+
+
+def move_left(i, j):
+	for p in range(len(world)):
+		# for q in range(len(world)):
+		i, j = i - 1, j
+
+
+def move_down(i, j):
+	# for p in range(len(world)):
+	for q in range(len(world)):
+		i, j = i, j + 1
+		if (i % 2 != 0):
+			move_left(i, j)
+'''

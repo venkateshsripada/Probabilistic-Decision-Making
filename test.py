@@ -88,3 +88,31 @@ def move_down(i, j):
 		if (i % 2 != 0):
 			move_left(i, j)
 '''
+
+#
+# x = [1,1]
+# #y = [1,2]
+#
+# fig, (ax1) = plt.subplots(nrows=1, sharex=True, sharey=True)
+# line1, = ax1.plot(x)
+# #line2, = ax2.plot(y)
+# ax1.set_xlim(-1,25)
+# ax1.set_ylim(-400,3000)
+# plt.ion()
+#
+# for i in range(20):
+#     x.append(x[-1]+x[-2])
+#     line1.set_data(range(len(x)), x)
+#     #y.append(y[-1]+y[-2])
+#     #line2.set_data(range(len(y)), y)
+#
+#     plt.pause(0.1)
+#
+# plt.ioff()
+# plt.show()
+
+plots = [(1,1),(1,0),(2,1)]
+for i,j in plots:
+    print i,j
+    plt.plot(i,j, 'go')
+plt.show()

@@ -16,8 +16,10 @@ import math
 
 world = np.full((100, 100), float(3))  # initial empty matrix
 world[4][1] = 5
+world[8][1] = 6
 sensed = []								#All the sensor measurements
 path = [(0,0)]
+count = 0
 
 '''Range Sensor: OUTPUT set of all measurements obtained at the instant'''
 
@@ -29,6 +31,8 @@ def range_s(i, j, len_beam=3):
 	#plt.plot(i,j,'g2')
 	print "Position of robot:", i,j
 	plt.plot(i,j,'ro')
+	plt.plot(4,1, 'go')
+	plt.plot(8,1,'go')
 	for t in all_beam_angle:
 		x_1 = i + len_beam*(np.cos(np.deg2rad(t)))
 		y_1 = j + len_beam*(np.sin(np.deg2rad(t)))
@@ -42,12 +46,12 @@ def range_s(i, j, len_beam=3):
 		#print "val", val
 		line((i,j), (val))					#gives grids that are in between start (i,j) and end points (val)
 
-	print "Measurement from sensors",sensed_measure
+#	print "Measurement from sensors",sensed_measure
 	global sensed
 
 	sensed.extend(sensed_measure)
 	pmf()
-	print "sensed:", sensed
+#	print "sensed:", sensed
 
 	
 	
@@ -106,7 +110,7 @@ def k_beams(number_beams=7):  # number of beams that should pass between 0 and 8
 	for k in beams:
 		all_beam_angle.append(k)
 
-	print "All beams:", all_beam_angle
+#	print "All beams:", all_beam_angle
 
 
 
@@ -135,29 +139,34 @@ def pmf():
 			measurement1 = measurement1 + (measurement/ (len(sensed)-1))
 			#print "measurement1", measurement1
 
-			mu = measurement1
-			variance = 1
-			sigma = math.sqrt(variance)		#generating a normal distribution
-			x = np.linspace(mu - 3*sigma, mu + 3*sigma, 100)
+			mu1 = measurement1
+			variance1 = 1
+			sigma1 = math.sqrt(variance1)		#generating a normal distribution
+			y = np.linspace(mu1 - 3*sigma1, mu1 + 3*sigma1, 100)
 			#  Adding all of the normalized distribtuions to measurement_value. This will form the first layer of the tree
-			norm_x = norm.pdf(x)
-			measurement_value.append(norm_x)		#measuement_value is a list of arrays
+			norm_x1 = norm.pdf(y)
+			measurement_value.append(norm_x1)		#measuement_value is a list of arrays
 
 
 		except:
 			pass
 
-		if i >=1:
-			KLD = entropy(measurement_value[i-1], measurement_value[i])
-			print "KLD at:",i,"=", KLD
-			if KLD > 2 * K_prev:
-				print "Increase in KLD at:", sensed[i]
+		#if i >=1:
+		KLD = entropy(norm_x, norm_x1)
+#		print "KLD at:",i,"=", KLD
+		if KLD > 2 * K_prev:
+			print "Increase in KLD at:", sensed[i]
+			if sensed[i] in path:
+				pass
+			else:
 				path.append(sensed[i])			#move the robot in the direction of maximum KLD
-				print "\npath is:", path
-			KL_Divergence.append(KLD)
+			print "\npath is:", path
+			global count
+			count = count + 1
+		KL_Divergence.append(KLD)
 
-			K_prev = KLD
-			print "\nK_prev:",i,"=", K_prev
+		K_prev = KLD
+#		print "\nK_prev:",i,"=", K_prev
 
 		'''bel(i, j) = bel(i+1,j)/n
 		range.append(bel(i,j))
@@ -184,10 +193,19 @@ def prob():
 if __name__ == '__main__':
 
 	
-	# j = 0
-	# for i in range(len(world)):
+	j = 0
+	x = len(path)
+	for i in range(len(world)):
 	 	#for j in range(len(world)):
-	# 	i,j = i+1, j
+	 	
+		if count > 0:
+			p,q = path[i]
+			range_s(p,q)
+			global count
+			count = 0
+		else:
+			i,j = i+1, j
+			range_s(i, j)
 			# if i%100 == 0:
 			# 	i,j = i,j -1
 			# elif i%2 != 0:
@@ -199,13 +217,18 @@ if __name__ == '__main__':
 			# #plt.plot(i, j, 'go')
 			# #plt.show()
 			# print i,j
-	#	range_s(i, j)
-	
-	for row in path:
-		i,j = row
-		range_s(i,j)
+				
 
-		print "\n\ni,j:", i,j
+			#x = len(path)
+	
+	# for row in path:
+	# 	i,j = row
+	# 	range_s(i,j)
+
+	# 	print "\n\ni,j:", i,j
+
+
+
 
 		# 	ani = matplotlib.animation.FuncAnimation(fig, range_s(i, j), frames=100, repeat=False)
 		# plt.show()
